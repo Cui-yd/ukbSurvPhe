@@ -1,5 +1,11 @@
+##########################################################
+# Generate Phecode file based on ICD9 and ICD10
+# Yidan Cui
+# Initiate date: 2024/05/17
+# Current date: 2025/02/20
+##########################################################
 ### Declaration: This script is sourced from the project createUKBphenome.
-### Available at https://github.com/umich-cphds/createUKBphenome. 
+### Available at https://github.com/umich-cphds/createUKBphenome.
 ### It is licensed under the GPL-3.0 license, and includes minor modifications by the current author.
 
 
@@ -54,11 +60,11 @@ if(!file.exists(file.fam)) {
 
 
 ## this fold will save output files
-if(!file.exists("./results")) dir.create("./results")   
+if(!file.exists("./results")) dir.create("./results")
 
 
 
-## Prepare PheCode 
+## Prepare PheCode
 ## read PheWAS map (downloaded from https://phewascatalog.org/phecodes; selected "export all" top right corner)
 icd9map <- fread("./data/phecode_icd9_rolled.csv",colClasses="character")
 ## read PheWAS map (downloaded from https://phewascatalog.org/phecodes_icd10; selected "export all" top right corner)
@@ -339,16 +345,16 @@ notFemale <- list()
 notMale <- list()
 
 ## TRUE FALSE variable for sex
-femaleTF <- sampleNames %in% females 
-maleTF <- sampleNames %in% males 
+femaleTF <- sampleNames %in% females
+maleTF <- sampleNames %in% males
 
 message("Creating case control studies")
 ## create case control studies, one phecode at a time
-pb = txtProgressBar(min = 0, max = nrow(pheinfo2), initial = 0, style = 3) 
+pb = txtProgressBar(min = 0, max = nrow(pheinfo2), initial = 0, style = 3)
 for(p in 1:nrow(pheinfo2)){
   phecode_remove <- ""
   phecode <- pheinfo2$phecode[p]
-  
+
   ## collect phecodes to include from controls
   exclude_phecodes <- phecode
   if(pheinfo2$phecode_exclude_range[p] != ""){
@@ -356,15 +362,15 @@ for(p in 1:nrow(pheinfo2)){
     exclude_phecodes <- c(exclude_phecodes,unlist(sapply(phecode_remove,function(x) expandPhecodes(x,T),USE.NAMES=F)))
   }
   exclude_phecodes <- unique(exclude_phecodes[which(exclude_phecodes %in% pheinfo2$phecode)])
-  
+
   ## collected sample sets by inclusion and exclusion criteria
   pinclusions <- unlist(inclusions[phecode])
   pexclusions <- unique(unlist(exclusions[exclude_phecodes]))
-  
+
   ## phecode based case control definitions (without sex filter)
   cases <- sampleNames %in% pinclusions
   controls <- !sampleNames %in% pexclusions
-  
+
   ## case control status
   ccstatus <- ccstatus0 <- rep(NA,nrow(phenoOut))
   if(pheinfo2$sex[p] == "Both"){
@@ -389,7 +395,7 @@ for(p in 1:nrow(pheinfo2)){
   }
   phenoOut[[paste0("X",phecode)]] <- ccstatus
   phenoOut0[[paste0("X",phecode)]] <- ccstatus0
-  
+
   ## get sample sizes
   pheinfo2$ncontrols[p] <- length(which(ccstatus == 0))
   pheinfo2$ncases[p] <- length(which(ccstatus == 1))

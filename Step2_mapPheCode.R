@@ -1,5 +1,11 @@
+##########################################################
+# Map ICD9 code and ICD10 code based on Phecode
+# Yidan Cui
+# Initiate date: 2024/05/17
+# Current date: 2025/02/20
+##########################################################
 ### Declaration: This script is sourced from the project ukbb_pan_ancestry
-### The sourced script is available at https://github.com/atgu/ukbb_pan_ancestry/blob/master/create_phecode_mapping.R. 
+### The sourced script is available at https://github.com/atgu/ukbb_pan_ancestry/blob/master/create_phecode_mapping.R.
 ### It is licensed under the MIT license, and includes minor modifications by the current author.
 
 
@@ -9,8 +15,8 @@ suppressPackageStartupMessages(library(purrr, quietly = T))
 suppressPackageStartupMessages(library(data.table, quietly = T))
 
 
-icd9key = fread("./results/UKB_PHENOME_ICD9_PHECODE_MAP.txt", colClasses = "character", data.table = F) 
-icd10key = fread("./results/UKB_PHENOME_ICD10_PHECODE_MAP.txt", colClasses = "character", data.table = F) 
+icd9key = fread("./results/UKB_PHENOME_ICD9_PHECODE_MAP.txt", colClasses = "character", data.table = F)
+icd10key = fread("./results/UKB_PHENOME_ICD10_PHECODE_MAP.txt", colClasses = "character", data.table = F)
 
 icd9_map = icd9key %>%
   group_by(phecode, sex, description, group) %>%
@@ -44,7 +50,7 @@ expandPhecodes <- function(x,addIntegers=T){
     # split range
     # character prefix
     i1 <- strsplit(x,"-")[[1]]
-    
+
     # numeric length of digits before "."
     nprefix <- max(nchar(gsub("\\..+","",i1)))
     # numbers of digits
@@ -57,7 +63,7 @@ expandPhecodes <- function(x,addIntegers=T){
     seq1 <- formatC(seq1, format='f', digits=ndigits,width=nprefix+ndigits+addDot,flag=0)
     # add integers if within range
     if(addIntegers) seq1 <- unique(sort(c(seq1,gsub("\\..+","",seq1[which(round(as.numeric(seq1)) == as.numeric(seq1))]))))
-    
+
     if(ndigits == 2){
       seq2 <- seq(as.numeric(i1[1]),as.numeric(i1[2]),(1/10^(ndigits-1)))
       seq2 <- formatC(seq2, format='f', digits=ndigits-1,width=nprefix+ndigits+addDot-1,flag=0)
@@ -72,7 +78,7 @@ expandPhecodes <- function(x,addIntegers=T){
 icd_all$exclude_phecodes = map_chr(1:nrow(pheinfo), function(p) {
   phecode_remove <- ""
   phecode <- pheinfo$phecode[p]
-  
+
   # collect phecodes to include from controls
   exclude_phecodes <- phecode
   if(pheinfo$phecode_exclude_range[p] != ""){

@@ -1,4 +1,4 @@
-# ukbbPheSurv
+# ukbSurvPhe
 This repositary is used for generating the time-to-event phenotypes in UK Biobank based on PheCodes (using ICD9 and ICD10).
 
 - The **failure time** was defined as the interval, rounded to the nearest full month, from their birth year and month to the diagnosis date of the relevant PheCode-specific PheCodes.

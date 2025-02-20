@@ -1,5 +1,13 @@
 # ukbbPheSurv
-This repositary is used for generating of survival phenotype.
+This repositary is used for generating the time-to-event phenotypes in UK Biobank based on PheCodes (using ICD9 and ICD10).
+
+- The **failure time** was defined as the interval, rounded to the nearest full month, from their birth year and month to the diagnosis date of the relevant PheCode-specific PheCodes.
+
+- Subjects with relevant PheCodes but without corresponding diagnosis dates were excluded from the analysis.
+
+- Subjects without relevant PheCodes and without exclusion PheCodes as defined by the PheCode were classified as **censored**. For these subjects, the censoring time was defined as the interval, rounded to the nearest full month, from their birth year and month to the latest of the following: the most recent recorded diagnosis date of any PheCodes, the lost-to-follow-up date, or the recorded date of death.
+
+
 
 ## Required R packages
 - data.table
@@ -16,7 +24,7 @@ This repositary is used for generating of survival phenotype.
 - zoo
 
 
-## Step 0: ./script/function.collectFields.r   
+## Step 0: ./script/function.collectFields.r
 Collect fields data of UKBB   
 output: ./data/FieldListing.txt    
 
@@ -42,7 +50,7 @@ Map ICD9 and ICD10
 /results/UKB_PHECODE_v1.2b1_ICD_Mapping.txt    
 
 ## Step 3: ./Step3_survPheCode.R    
-Create survival phenotype    
+Create time-to-event phenotypes
 **input**:    
 UK Biobank main data (*.csv)    
 UK Biobank genome fam data (*.fam)    
@@ -51,4 +59,10 @@ UK Biobank genome fam data (*.fam)
 ./results/UKB_PHENOME_DESCRIPTION.txt    
 ./results/UKB_PHENOME.txt    
 **output**:
-./results/*_pheSurv.txt    
+./phenotypes/*_pheSurv_useAttendTime.txt   
+
+
+
+## Reference:
+https://github.com/umich-cphds/createUKBphenome
+https://github.com/atgu/ukbb_pan_ancestry/blob/master/create_phecode_mapping.R
